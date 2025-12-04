@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  ScrollView,
 } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
 
@@ -258,90 +259,93 @@ export default function ExpenseScreen() {
         </View>
       </Modal>
 
-      <Text style={styles.heading}>STUDENT EXPENSE TRACKER</Text>
+      <ScrollView showsVerticalScrollIndicator={true} style={styles.scrollView}>
+        <Text style={styles.heading}>STUDENT EXPENSE TRACKER</Text>
 
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Amount (e.g. 12.50)"
-          placeholderTextColor="#9ca3af"
-          keyboardType="numeric"
-          value={amount}
-          onChangeText={setAmount}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Category (Food, Books, Rent...)"
-          placeholderTextColor="#9ca3af"
-          value={category}
-          onChangeText={setCategory}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Date (YYYY-MM-DD)"
-          placeholderTextColor="#9ca3af"
-          value={date}
-          onChangeText={setDate}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Note (optional)"
-          placeholderTextColor="#9ca3af"
-          value={note}
-          onChangeText={setNote}
-        />
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Amount (e.g. 12.50)"
+            placeholderTextColor="#9ca3af"
+            keyboardType="numeric"
+            value={amount}
+            onChangeText={setAmount}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Category (Food, Books, Rent...)"
+            placeholderTextColor="#9ca3af"
+            value={category}
+            onChangeText={setCategory}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Date (YYYY-MM-DD)"
+            placeholderTextColor="#9ca3af"
+            value={date}
+            onChangeText={setDate}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Note (optional)"
+            placeholderTextColor="#9ca3af"
+            value={note}
+            onChangeText={setNote}
+          />
 
-        <TouchableOpacity style={styles.addButton} onPress={addExpense}>
-          <Text style={styles.addButtonText}>Add Expense</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[styles.filterButton, dateFilter === 'all' && styles.filterButtonActive]}
-          onPress={() => setDateFilter('all')}
-        >
-          <Text style={styles.filterText}>All</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, dateFilter === 'week' && styles.filterButtonActive]}
-          onPress={() => setDateFilter('week')}
-        >
-          <Text style={styles.filterText}>This Week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.filterButton, dateFilter === 'month' && styles.filterButtonActive]}
-          onPress={() => setDateFilter('month')}
-        >
-          <Text style={styles.filterText}>This Month</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.summaryContainer}>
-        <View style={styles.summaryBox}>
-          <Text style={styles.summaryLabel}>Total Spending</Text>
-          <Text style={styles.summaryAmount}>${getTotalSpending().toFixed(2)}</Text>
+          <TouchableOpacity style={styles.addButton} onPress={addExpense}>
+            <Text style={styles.addButtonText}>Add Expense</Text>
+          </TouchableOpacity>
         </View>
-      </View>
 
-      <View style={styles.categoryContainer}>
-        <Text style={styles.categoryTitle}>By Category</Text>
-        {Object.entries(getTotalByCategory()).map(([cat, total]) => (
-          <View key={cat} style={styles.categoryRow}>
-            <Text style={styles.categoryName}>{cat}</Text>
-            <Text style={styles.categoryAmount}>${total.toFixed(2)}</Text>
+        <View style={styles.filterContainer}>
+          <TouchableOpacity
+            style={[styles.filterButton, dateFilter === 'all' && styles.filterButtonActive]}
+            onPress={() => setDateFilter('all')}
+          >
+            <Text style={styles.filterText}>All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterButton, dateFilter === 'week' && styles.filterButtonActive]}
+            onPress={() => setDateFilter('week')}
+          >
+            <Text style={styles.filterText}>This Week</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterButton, dateFilter === 'month' && styles.filterButtonActive]}
+            onPress={() => setDateFilter('month')}
+          >
+            <Text style={styles.filterText}>This Month</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.summaryContainer}>
+          <View style={styles.summaryBox}>
+            <Text style={styles.summaryLabel}>Total Spending</Text>
+            <Text style={styles.summaryAmount}>${getTotalSpending().toFixed(2)}</Text>
           </View>
-        ))}
-      </View>
+        </View>
 
-      <FlatList
-        data={getFilteredExpenses()}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderExpense}
-        ListEmptyComponent={
-          <Text style={styles.empty}>No expenses yet.</Text>
-        }
-      />
+        <View style={styles.categoryContainer}>
+          <Text style={styles.categoryTitle}>By Category</Text>
+          {Object.entries(getTotalByCategory()).map(([cat, total]) => (
+            <View key={cat} style={styles.categoryRow}>
+              <Text style={styles.categoryName}>{cat}</Text>
+              <Text style={styles.categoryAmount}>${total.toFixed(2)}</Text>
+            </View>
+          ))}
+        </View>
+
+        <FlatList
+          data={getFilteredExpenses()}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderExpense}
+          scrollEnabled={false}
+          ListEmptyComponent={
+            <Text style={styles.empty}>No expenses yet.</Text>
+          }
+        />
+      </ScrollView>
 
     </SafeAreaView>
   );
@@ -351,8 +355,12 @@ export default function ExpenseScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    padding: 16, 
-    backgroundColor: '#f9fafb' 
+    backgroundColor: '#f9fafb', 
+    marginHorizontal: 0.5,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   heading: {
     fontSize: 20,
@@ -389,12 +397,13 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 16,
+    marginTop: 10,
+    marginBottom: 20,
     justifyContent: 'space-between',
   },
   filterButton: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 2,
     marginHorizontal: 20,
     backgroundColor: '#fab4e3ff',
@@ -419,6 +428,7 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     marginBottom: 10,
+    marginHorizontal: 20,
     borderLeftWidth: 4,
     borderLeftColor: '#7bda45ff',
     shadowColor: '#000',
@@ -458,8 +468,10 @@ const styles = StyleSheet.create({
   empty: {
     color: '#9ca3af',
     marginTop: 32,
+    marginHorizontal: 20,
     textAlign: 'center',
     fontSize: 16,
+    marginBottom: 32,
   },
   footer: {
     textAlign: 'center',
@@ -474,17 +486,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
-   borderRadius: 8,
+    borderRadius: 8,
     alignItems: 'center',
   },
-   addButtonText: {
+  addButtonText: {
     color: '#ffffff',            
     fontWeight: '700',
     fontSize: 12,
   },
-    summaryContainer: {
+  summaryContainer: {
     marginHorizontal: 20,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   summaryBox: {
     backgroundColor: '#fab4e3ff',
@@ -505,7 +517,7 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     marginHorizontal: 20,
-    marginBottom: 16,
+    marginBottom: 30,
     backgroundColor: '#fff',
     padding: 12,
     borderRadius: 10,
@@ -538,7 +550,7 @@ const styles = StyleSheet.create({
     color: '#826bdfff',
     fontWeight: '700',
   },
-modalOverlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
