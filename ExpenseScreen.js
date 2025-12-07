@@ -405,14 +405,6 @@ export default function ExpenseScreen() {
                     paddingLeft="15"
                     absolute
                   />
-                  <View style={styles.legendContainer}>
-                    {getPieChartData().map((item, idx) => (
-                      <View key={item.name} style={styles.legendItem}>
-                        <View style={[styles.legendColor, { backgroundColor: item.color }]} />
-                        <Text style={styles.legendText}>{`$${item.amount.toFixed(2)} - ${item.name}`}</Text>
-                      </View>
-                    ))}
-                  </View>
                 </>
               ) : (
                 <Text style={styles.noChartData}>No expenses to display in chart</Text>
@@ -762,30 +754,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1f2937',
     marginBottom: 8,
-  },
-  legendContainer: {
-    marginTop: 16,
-    width: '100%',
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    paddingTop: 12,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    paddingVertical: 4,
-  },
-  legendColor: {
-    width: 12,
-    height: 12,
-    borderRadius: 2,
-    marginRight: 8,
-  },
-  legendText: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontWeight: '500',
   },
   noChartData: {
     padding: 16,
