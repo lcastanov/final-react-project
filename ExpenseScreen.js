@@ -11,7 +11,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
-import { PieChart } from 'react-native-chart-kit';
 
 export default function ExpenseScreen() {
   const db = useSQLiteContext();
@@ -28,7 +27,6 @@ export default function ExpenseScreen() {
   const [editCategory, setEditCategory] = useState('');
   const [editNote, setEditNote] = useState('');
   const [editDate, setEditDate] = useState('');
-  const [visualizationExpanded, setVisualizationExpanded] = useState(false);
 
   const getTotalSpending = () => {
     return getFilteredExpenses().reduce((sum, expense) => sum + expense.amount, 0);
@@ -40,18 +38,6 @@ export default function ExpenseScreen() {
       acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
       return acc;
     }, {});
-  };
-
-  const getPieChartData = () => {
-    const categoryTotals = getTotalByCategory();
-    const colors = ['#826bdfff', '#e756b7ff', '#7bda45ff', '#fab4e3ff', '#ff6b6bff', '#4ecdc4ff', '#ffe66dff', '#95e1d3ff'];
-    return Object.entries(categoryTotals).map(([cat, total], idx) => ({
-      name: cat,
-      amount: total,
-      color: colors[idx % colors.length],
-      legendFontColor: '#333',
-      legendFontSize: 12,
-    }));
   };
 
   const loadExpenses = async () => {
@@ -350,43 +336,6 @@ export default function ExpenseScreen() {
           ))}
         </View>
 
-        <View style={styles.visualizationContainer}>
-          <TouchableOpacity 
-            style={styles.visualizationHeader}
-            onPress={() => setVisualizationExpanded(!visualizationExpanded)}
-          >
-            <Text style={styles.visualizationTitle}>Data Visualizations</Text>
-            <Text style={styles.visualizationToggle}>{visualizationExpanded ? '▼' : '▶'}</Text>
-          </TouchableOpacity>
-          {visualizationExpanded && (
-            <View style={styles.visualizationContent}>
-              <Text style={styles.chartTitle}>Expense Distribution</Text>
-              {getPieChartData().length > 0 ? (
-                <PieChart
-                  data={getPieChartData().map(item => ({
-                    name: item.name,
-                    population: item.amount,
-                    color: item.color,
-                    legendFontColor: item.legendFontColor,
-                    legendFontSize: item.legendFontSize,
-                  }))}
-                  width={320}
-                  height={220}
-                  chartConfig={{
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  }}
-                  accessor="population"
-                  backgroundColor="transparent"
-                  paddingLeft="15"
-                  absolute
-                />
-              ) : (
-                <Text style={styles.noChartData}>No expenses to display in chart</Text>
-              )}
-            </View>
-          )}
-        </View>
-
         <FlatList
           data={getFilteredExpenses()}
           keyExtractor={(item) => item.id.toString()}
@@ -668,51 +617,5 @@ const styles = StyleSheet.create({
   editButtonText: {
     color: '#826bdfff',
     fontWeight: '700',
-  },
-  visualizationContainer: {
-    marginHorizontal: 20,
-    marginBottom: 30,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 2,
-    elevation: 1,
-    overflow: 'hidden',
-  },
-  visualizationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  visualizationTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1f2937',
-  },
-  visualizationToggle: {
-    fontSize: 14,
-    color: '#9ca3af',
-    fontWeight: '600',
-  },
-  visualizationContent: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  chartTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  noChartData: {
-    padding: 16,
-    textAlign: 'center',
-    color: '#9ca3af',
-    fontSize: 14,
   },
 });
