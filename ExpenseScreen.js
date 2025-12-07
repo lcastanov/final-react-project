@@ -27,6 +27,7 @@ export default function ExpenseScreen() {
   const [editCategory, setEditCategory] = useState('');
   const [editNote, setEditNote] = useState('');
   const [editDate, setEditDate] = useState('');
+  const [expensesExpanded, setExpensesExpanded] = useState(false);
 
   const getTotalSpending = () => {
     return getFilteredExpenses().reduce((sum, expense) => sum + expense.amount, 0);
@@ -336,15 +337,28 @@ export default function ExpenseScreen() {
           ))}
         </View>
 
-        <FlatList
-          data={getFilteredExpenses()}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderExpense}
-          scrollEnabled={false}
-          ListEmptyComponent={
-            <Text style={styles.empty}>No expenses yet.</Text>
-          }
-        />
+        <View style={styles.expensesExpandableContainer}>
+        <TouchableOpacity 
+          style={styles.expensesExpandableHeader}
+          onPress={() => setExpensesExpanded(!expensesExpanded)}
+        >
+          <Text style={styles.expensesExpandableTitle}>Expenses List</Text>
+          <Text style={styles.expensesExpandableToggle}>{expensesExpanded ? '▼' : '▶'}</Text>
+        </TouchableOpacity>
+        {expensesExpanded && (
+          <View style={styles.expensesExpandableContent}>
+            <FlatList
+              data={getFilteredExpenses()}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderExpense}
+              scrollEnabled={false}
+              ListEmptyComponent={
+                <Text style={styles.empty}>No expenses yet.</Text>
+              }
+            />
+          </View>
+        )}
+      </View>
         
       </ScrollView>
 
@@ -617,5 +631,38 @@ const styles = StyleSheet.create({
   editButtonText: {
     color: '#826bdfff',
     fontWeight: '700',
+  },
+  expensesExpandableContainer: {
+    marginHorizontal: 20,
+    marginBottom: 30,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+    overflow: 'hidden',
+  },
+  expensesExpandableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  expensesExpandableTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1f2937',
+  },
+  expensesExpandableToggle: {
+    fontSize: 14,
+    color: '#9ca3af',
+    fontWeight: '600',
+  },
+  expensesExpandableContent: {
+    padding: 8,
   },
 });
