@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite';
+import { PieChart } from 'react-native-chart-kit';
 
 export default function ExpenseScreen() {
   const db = useSQLiteContext();
@@ -209,6 +210,20 @@ export default function ExpenseScreen() {
     setup();
   }, []);
 
+  // Helper for pie chart data
+  const getPieChartData = () => {
+    const totals = getTotalByCategory();
+    const colors = [
+      '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#fbb0ff',
+      '#fab4e3', '#7bda45', '#e756b7', '#826bdf', '#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3'
+    ];
+    return Object.entries(totals).map(([category, total], index) => ({
+      name: category,
+      amount: total,
+      color: colors[index % colors.length],
+    }));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Modal
@@ -371,7 +386,37 @@ export default function ExpenseScreen() {
           </TouchableOpacity>
           {visualizationExpanded && (
             <View style={styles.visualizationExpandableContent}>
-              {/* Visualization content will go here */}
+              <Text style={styles.chartTitle}>Expenses by Category</Text>
+              {getPieChartData().length > 0 ? (
+                <>
+                  <PieChart
+                    data={getPieChartData().map(item => ({
+                      name: item.name,
+                      population: item.amount,
+                      color: item.color,
+                    }))}
+                    width={320}
+                    height={220}
+                    chartConfig={{
+                      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                    }}
+                    accessor="population"
+                    backgroundColor="transparent"
+                    paddingLeft="15"
+                    absolute
+                  />
+                  <View style={styles.legendContainer}>
+                    {getPieChartData().map((item, idx) => (
+                      <View key={item.name} style={styles.legendItem}>
+                        <View style={[styles.legendColor, { backgroundColor: item.color }]} />
+                        <Text style={styles.legendText}>{`$${item.amount.toFixed(2)} - ${item.name}`}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </>
+              ) : (
+                <Text style={styles.noChartData}>No expenses to display in chart</Text>
+              )}
             </View>
           )}
         </View>
@@ -711,5 +756,41 @@ const styles = StyleSheet.create({
   },
   visualizationExpandableContent: {
     padding: 8,
+  },
+  chartTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  legendContainer: {
+    marginTop: 16,
+    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingTop: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingVertical: 4,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  legendText: {
+    fontSize: 12,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  noChartData: {
+    padding: 16,
+    textAlign: 'center',
+    color: '#9ca3af',
+    fontSize: 14,
   },
 });
