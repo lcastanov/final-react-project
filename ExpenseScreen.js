@@ -338,30 +338,28 @@ export default function ExpenseScreen() {
         </View>
 
         <View style={styles.expensesExpandableContainer}>
-        <TouchableOpacity 
-          style={styles.expensesExpandableHeader}
-          onPress={() => setExpensesExpanded(!expensesExpanded)}
-        >
-          <Text style={styles.expensesExpandableTitle}>Expenses List</Text>
-          <Text style={styles.expensesExpandableToggle}>{expensesExpanded ? '▼' : '▶'}</Text>
-        </TouchableOpacity>
-        {expensesExpanded && (
-          <View style={styles.expensesExpandableContent}>
-            <FlatList
-              data={getFilteredExpenses()}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderExpense}
-              scrollEnabled={false}
-              ListEmptyComponent={
-                <Text style={styles.empty}>No expenses yet.</Text>
-              }
-            />
-          </View>
-        )}
-      </View>
-        
+          <TouchableOpacity 
+            style={styles.expensesExpandableHeader}
+            onPress={() => setExpensesExpanded(!expensesExpanded)}
+          >
+            <Text style={styles.expensesExpandableTitle}>Expenses List</Text>
+            <Text style={styles.expensesExpandableToggle}>{expensesExpanded ? '▼' : '▶'}</Text>
+          </TouchableOpacity>
+          {expensesExpanded && (
+            <View style={styles.expensesExpandableContent}>
+              <FlatList
+                data={getFilteredExpenses()}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderExpense}
+                scrollEnabled={false}
+                ListEmptyComponent={
+                  <Text style={styles.empty}>No expenses yet.</Text>
+                }
+              />
+            </View>
+          )}
+        </View>
       </ScrollView>
-
     </SafeAreaView>
   );
 }
