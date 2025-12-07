@@ -28,6 +28,7 @@ export default function ExpenseScreen() {
   const [editNote, setEditNote] = useState('');
   const [editDate, setEditDate] = useState('');
   const [expensesExpanded, setExpensesExpanded] = useState(false);
+  const [visualizationExpanded, setVisualizationExpanded] = useState(false);
 
   const getTotalSpending = () => {
     return getFilteredExpenses().reduce((sum, expense) => sum + expense.amount, 0);
@@ -359,6 +360,21 @@ export default function ExpenseScreen() {
             </View>
           )}
         </View>
+
+        <View style={styles.visualizationExpandableContainer}>
+          <TouchableOpacity 
+            style={styles.visualizationExpandableHeader}
+            onPress={() => setVisualizationExpanded(!visualizationExpanded)}
+          >
+            <Text style={styles.visualizationExpandableTitle}>Expenses Visualization</Text>
+            <Text style={styles.visualizationExpandableToggle}>{visualizationExpanded ? '▼' : '▶'}</Text>
+          </TouchableOpacity>
+          {visualizationExpanded && (
+            <View style={styles.visualizationExpandableContent}>
+              {/* Visualization content will go here */}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -661,6 +677,39 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   expensesExpandableContent: {
+    padding: 8,
+  },
+  visualizationExpandableContainer: {
+    marginHorizontal: 20,
+    marginBottom: 30,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+    overflow: 'hidden',
+  },
+  visualizationExpandableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  visualizationExpandableTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1f2937',
+  },
+  visualizationExpandableToggle: {
+    fontSize: 14,
+    color: '#9ca3af',
+    fontWeight: '600',
+  },
+  visualizationExpandableContent: {
     padding: 8,
   },
 });
